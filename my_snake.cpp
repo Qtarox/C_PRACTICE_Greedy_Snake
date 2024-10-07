@@ -44,16 +44,21 @@ public:
     void grow();  // Grow the snake
     bool checkCollision(int boardWidth, int boardHeight);  // Check collision with walls or itself
     bool getBody(int x1,int y1) const;  // check if the snake's current body position covers (i,j)
+    int getLength();
 };
 
 Snake::Snake()
 {
-    position[0].s_x=2;
-    position[0].s_y=2;
+    position[0].s_x=8;
+    position[0].s_y=8;
     length=1;
     direction=3;
 }
 
+int Snake::getLength()
+{
+	return length;
+}
 void Snake::move()
 {
     for(int i=length-1;i>0;i--)
@@ -144,7 +149,7 @@ bool Snake::checkCollision(int boardWidth, int boardHeight) // true== collid , f
             return true;
         }
     }
-    if(position[0].s_x<=0 || position[0].s_x>=boardWidth || position[0].s_y<=0 || position[0].s_y>=boardHeight)
+    if(position[0].s_x<=0 || position[0].s_x>=boardWidth-1 || position[0].s_y<=0 || position[0].s_y>=boardHeight-1)
     {
         return true;
     }
@@ -181,7 +186,7 @@ private:
 
 public:
     Board();  // Constructor to set board dimensions
-    void draw(const Snake& snake, const Food& food) const;  // Draw the board, snake, and food
+    void draw(const Snake& snake, const Food& food, const int score, const int length) const;  // Draw the board, snake, and food
 };
 
 Board::Board()
@@ -190,20 +195,34 @@ Board::Board()
     height=N;
 }
 
-void Board::draw(const Snake& snake, const Food& food) const
+void Board::draw(const Snake& snake, const Food& food, const int score, const int length) const
 {
-    for(int i=0;i<width;i++)
+	int score_wd=12;
+    for(int i=0;i<height;i++)
     {
-        for(int j=0;j<width;j++)
+    	int tmp_flg=0;
+        for(int j=0;j<width+score_wd;j++)
         {
             if(i==0 || i==height-1)
             {
-                cout<<" =";
+                cout<<"==";
             }
-            else if(j==0 || j==width-1)
+            else if(j==0 || j==width-1 )
             {
                 cout<<" |";
             }
+            else if(j>=width and i==8 and tmp_flg==0)
+            {
+            cout<<" Score: "<<score;
+            tmp_flg=1;
+				
+			}  
+			else if(j>=width and i==13 and tmp_flg==0)
+            {
+            cout<<" length: "<<length;
+            tmp_flg=1;
+				
+			}            
             else
             {
                 if(snake.getBody(i,j)==1)
@@ -231,6 +250,7 @@ class Game {
 private:
     Snake snake;
     Food food;
+    int score;
     Board board;
     int game_speed;
     bool gameOver;
@@ -246,7 +266,7 @@ Game::Game(int boardWidth, int boardHeight,int spd)
 {
 
     food.generateFood(boardWidth,boardHeight,snake);
-
+	score=0;
     gameOver= false;
     game_speed=spd;
 }
@@ -256,9 +276,11 @@ int Game::run()
     while(!gameOver)
     {
 
-        system("cls");
-        board.draw(snake,food);
-        update();
+        
+		system("cls");
+        board.draw(snake,food,score , snake.getLength());
+		update();
+        
 
     }
     return 0;
@@ -300,6 +322,7 @@ bool Game::update()
     if(snake.getBody(food.x,food.y))
     {
         snake.grow();
+        score+=50*400/game_speed;
         food.generateFood(N,N,snake);
     }
     snake.move();
@@ -340,6 +363,25 @@ int choose_mod()
 	
 }
 
+void move(int x,int y)
+{
+HANDLE hOut=GetStdHandle(STD_OUTPUT_HANDLE);
+COORD pos={x,y};
+SetConsoleCursorPosition(hOut,pos);
+}
+
+void hideCursor() {
+    // Get console handle
+    HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+    
+    // Get current cursor info
+    CONSOLE_CURSOR_INFO cursorInfo;
+    GetConsoleCursorInfo(consoleHandle, &cursorInfo);
+    
+    // Set the cursor visibility to false (hide cursor)
+    cursorInfo.bVisible = false;
+    SetConsoleCursorInfo(consoleHandle, &cursorInfo);
+}
 int main() {
     char ctn = 'y';
 
@@ -349,17 +391,21 @@ int main() {
     cout << "\n\n\n\t\t\t Press any keys to start" << endl;//starting
     getch();  //just press
     int input_speed=choose_mod();
-    Game game1(N,N,input_speed);
-    int flg=1;
+
+    hideCursor();
     while (ctn == 'y')
     {
+    	Game game1(N,N,input_speed);
+    	int flg=1;
 //        system("cls");
 //        cout<<"let's play";
         flg=game1.run();
         if(flg==0)
         {
-            cout<<" game over!";
-            break;
+        	system("cls");
+            cout<<" \n\n\n\n\n\t\t\tgame over!"<< endl;
+            cout<<" \n\n\n\n   Play Again? y  or  n  ?"<<endl;
+            ctn=getch();
         }
 
 
