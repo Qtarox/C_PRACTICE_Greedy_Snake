@@ -1,5 +1,5 @@
 # C_PRACTICE
-C++ programming parctice : Greedy Snake (Nibbles)
+## 1.C++ programming parctice : Greedy Snake (Nibbles)
 
 This file is a Greedy Snake game. Use the up, down, left and right keys to control the snake and eat as many stars as you can!
 Have fun.
@@ -15,3 +15,6 @@ There are several necessary class in this C++ code:
 ## Interaction between Different Parts
 1. Create a Game object which includes 3 objects: snake, food, board
 2. The parameters of each object are called and used by the Game object
+
+
+## 2.C++ programming parctice : Russian Blocks
