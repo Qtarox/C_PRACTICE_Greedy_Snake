@@ -18,7 +18,15 @@ int start;
 char key;
 
 
-
+void gotoxy(int x,int y){
+	int xx=0x0b;
+	HANDLE hOutput;
+	COORD loc;
+	loc.X=x;
+	loc.Y=y;
+	hOutput=GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleCursorPosition(hOutput,loc);
+}
 class block_pos{
 	public:
 		int b_x;
@@ -200,15 +208,15 @@ void blocks::move(int direction)
 	
 	if(direction==1)//fall
 	{
-		if(this->get_bottom()<M-2)
-		{for(int j=0;j<8;j++)
-		{
-			if(bs1[block_ind][j].b_x!=0 || bs1[block_ind][j].b_y!=0){
-				
-					bs1[block_ind][j].b_x+=1;
-				}
-			}
-		}
+//		if(this->get_bottom()<M-2)
+//		{for(int j=0;j<8;j++)
+//		{
+//			if(bs1[block_ind][j].b_x!=0 || bs1[block_ind][j].b_y!=0){
+//				
+//					bs1[block_ind][j].b_x+=1;
+//				}
+//			}
+//		}
 
 	}
 	else if(direction==3)//right
@@ -231,10 +239,8 @@ void blocks::move(int direction)
 		for(int j=0;j<8;j++) 
 		{
 			if(bs1[block_ind][j].b_x!=0 || bs1[block_ind][j].b_y!=0)
-			{
-				
-					bs1[block_ind][j].b_y-=1;
-				
+			{	
+					bs1[block_ind][j].b_y-=1;	
 			}
 
 		}
@@ -534,7 +540,8 @@ int Game::run()
     {
 		
         direction=0;
-		system("cls");
+//		system("cls");
+		gotoxy(0,0); 
         game_board.show_board(game_block,game_dump);
 		update();
 		cout<<"run!";        
