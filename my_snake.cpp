@@ -13,6 +13,7 @@ int start;
 int cnt=0;
 char key;
 int direction=3;
+void gotoxy(int x,int y);
 class snake_pos{
 public:
     int s_x;
@@ -277,7 +278,8 @@ int Game::run()
     {
 
         
-		system("cls");
+//		system("cls");
+		gotoxy(0,0); 
         board.draw(snake,food,score , snake.getLength());
 		update();
         
@@ -381,6 +383,16 @@ void hideCursor() {
     // Set the cursor visibility to false (hide cursor)
     cursorInfo.bVisible = false;
     SetConsoleCursorInfo(consoleHandle, &cursorInfo);
+}
+
+void gotoxy(int x,int y){
+	int xx=0x0b;
+	HANDLE hOutput;
+	COORD loc;
+	loc.X=x;
+	loc.Y=y;
+	hOutput=GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleCursorPosition(hOutput,loc);
 }
 int main() {
     char ctn = 'y';
