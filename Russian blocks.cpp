@@ -10,7 +10,7 @@
 #define BS2 6
 #define N 16
 #define M 30 
-#define BLK_NUM 2
+#define BLK_NUM 5
 using namespace std;
 
 int direction=0;
@@ -52,7 +52,7 @@ class blocks//2*2 square
 {
 	
 	public:
-		block_pos bs1[2][8];
+		block_pos bs1[BLK_NUM][8];
 		int block_ind;
 //		int lowest_point;
 	
@@ -61,7 +61,7 @@ class blocks//2*2 square
 		int get_left();
 		int get_right();
 		int get_bottom();
-		void move(int direction);
+		void move(int direction, int bottom);
 		void initialize();
 		void fall();
 		bool is_blk(int x,int y);
@@ -73,7 +73,7 @@ class blocks//2*2 square
 blocks::blocks(int cls_ind)
 {
 	block_ind=cls_ind;
-	for(int i=0;i<2;i++)
+	for(int i=0;i<BLK_NUM;i++)
 	{
 		for(int j=0;j<8;j++)
 		{
@@ -93,6 +93,24 @@ blocks::blocks(int cls_ind)
 	bs1[1][1].b_y=N/2;
 	bs1[1][2].b_y=N/2+1;
 	bs1[1][3].b_y=N/2+2;
+	//2£º T blck
+	bs1[2][0].b_y=N/2-1; 
+	bs1[2][1].b_y=N/2;
+	bs1[2][2].b_y=N/2+1;
+	bs1[2][3].b_x=1;
+	bs1[2][3].b_y=N/2;
+		//3 : L block
+	bs1[3][0].b_y=N/2-1; 
+	bs1[3][1].b_y=N/2;
+	bs1[3][2].b_y=N/2+1;
+	bs1[3][3].b_x=1;
+	bs1[3][3].b_y=N/2+1;
+	//4: long rect
+	bs1[1][0].b_y=N/2-2;
+	bs1[1][1].b_y=N/2-1;
+	bs1[1][2].b_y=N/2;
+	bs1[1][3].b_y=N/2+1;
+	bs1[1][4].b_y=N/2+2;
 	
 }
 
@@ -115,6 +133,48 @@ void blocks::rotate()
 			bs1[1][j].b_y=new_y;
 		}
 		
+	}
+	else if(block_ind==2)
+	{
+		int center_x=bs1[block_ind][1].b_x;
+		int center_y=bs1[block_ind][1].b_y;
+		for(int j=0;j<4;j++)
+		{
+			int dx=bs1[block_ind][j].b_x-center_x;
+			int dy=bs1[block_ind][j].b_y-center_y;
+			int new_x=center_x-dy;
+			int new_y=center_y+dx;
+			bs1[block_ind][j].b_x=new_x;
+			bs1[block_ind][j].b_y=new_y;
+		}
+	}
+	else if(block_ind==3)
+	{
+		int center_x=bs1[block_ind][1].b_x;
+		int center_y=bs1[block_ind][1].b_y;
+		for(int j=0;j<4;j++)
+		{
+			int dx=bs1[block_ind][j].b_x-center_x;
+			int dy=bs1[block_ind][j].b_y-center_y;
+			int new_x=center_x-dy;
+			int new_y=center_y+dx;
+			bs1[block_ind][j].b_x=new_x;
+			bs1[block_ind][j].b_y=new_y;
+		}
+	}
+	else if(block_ind==4)
+	{
+		int center_x=bs1[block_ind][2].b_x;
+		int center_y=bs1[block_ind][2].b_y;
+		for(int j=0;j<5;j++)
+		{
+			int dx=bs1[block_ind][j].b_x-center_x;
+			int dy=bs1[block_ind][j].b_y-center_y;
+			int new_x=center_x-dy;
+			int new_y=center_y+dx;
+			bs1[block_ind][j].b_x=new_x;
+			bs1[block_ind][j].b_y=new_y;
+		}
 	}
 }
 int blocks::get_left()
@@ -169,8 +229,8 @@ int blocks::get_bottom()
 void blocks::initialize()
 {
 	srand(time(0));
-	block_ind=rand()%2;
-	for(int i=0;i<2;i++)
+	block_ind=rand()%BLK_NUM;
+	for(int i=0;i<BLK_NUM;i++)
 	{
 		for(int j=0;j<8;j++)
 		{
@@ -189,6 +249,24 @@ void blocks::initialize()
 	bs1[1][1].b_y=N/2;
 	bs1[1][2].b_y=N/2+1;
 	bs1[1][3].b_y=N/2+2;
+		//2£º T block
+	bs1[2][0].b_y=N/2-1; 
+	bs1[2][1].b_y=N/2;
+	bs1[2][2].b_y=N/2+1;
+	bs1[2][3].b_x=1;
+	bs1[2][3].b_y=N/2;
+	//3 : L block
+	bs1[3][0].b_y=N/2-1; 
+	bs1[3][1].b_y=N/2;
+	bs1[3][2].b_y=N/2+1;
+	bs1[3][3].b_x=1;
+	bs1[3][3].b_y=N/2+1;
+		//4: long rect
+	bs1[1][0].b_y=N/2-2;
+	bs1[1][1].b_y=N/2-1;
+	bs1[1][2].b_y=N/2;
+	bs1[1][3].b_y=N/2+1;
+	bs1[1][4].b_y=N/2+2;
 	
 }
 bool blocks::is_blk(int x,int y)
@@ -202,21 +280,21 @@ bool blocks::is_blk(int x,int y)
 	}
 	return false;
 }
-void blocks::move(int direction)
+void blocks::move(int direction,int bottom)
 {
 
 	
 	if(direction==1)//fall
 	{
-//		if(this->get_bottom()<M-2)
-//		{for(int j=0;j<8;j++)
-//		{
-//			if(bs1[block_ind][j].b_x!=0 || bs1[block_ind][j].b_y!=0){
-//				
-//					bs1[block_ind][j].b_x+=1;
-//				}
-//			}
-//		}
+		if(this->get_bottom()<bottom-3)
+		{for(int j=0;j<8;j++)
+		{
+			if(bs1[block_ind][j].b_x!=0 || bs1[block_ind][j].b_y!=0){
+				
+					bs1[block_ind][j].b_x+=1;
+				}
+			}
+		}
 
 	}
 	else if(direction==3)//right
@@ -276,6 +354,7 @@ class dump{
 		bool is_dump(int x,int y);
 		void dump_absorb(blocks cur_blk);
 		void dump_refresh();
+		int get_top();
 		
 		
 		
@@ -311,6 +390,22 @@ bool dump::is_dump(int x,int y)
 	}
 }
 
+int dump::get_top()
+{
+	for(int i=0;i<M;i++)
+	{
+		for(int j=0;j<N;j++)
+		{
+			if(dump_body[i][j]==1)
+			{
+				return i;	
+			}
+
+			
+		}	
+	}
+	return M-1;
+}
 void dump::dump_absorb(blocks cur_blk)
 {
 	for(int j=0;j<8;j++)
@@ -440,7 +535,7 @@ class Game{
 	public:
 		Game():game_block(0)
 		{
-			game_speed=250;
+			game_speed=100;
 			gameOver= false;
 		}
 		int run();
@@ -483,7 +578,7 @@ bool Game::update()
 		}
 		else
 		{
-			game_block.move(direction);
+			game_block.move(direction,game_dump.get_top());
 		}
 		
 		direction=0;
@@ -580,7 +675,7 @@ int main()
     {
     	Game myGame;
     	int flg=1;
-//        system("cls");
+        system("cls");
 //        cout<<"let's play";
         flg=myGame.run();
         if(flg==0)
